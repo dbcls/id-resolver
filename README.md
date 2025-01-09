@@ -1,1 +1,1 @@
-# uri-resolver
+# id-resolver
