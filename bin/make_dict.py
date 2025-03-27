@@ -19,14 +19,26 @@ def fetch_and_merge_data(idorg_api_url, togoid_api_url, bioregistry_api_url):
         bioregistry_data = bioregistry_response.json()
 
         # ID.orgデータを処理
+        """"
+            "namespaces": [
+      {
+        "id": 341,
+        "prefix": "genedb",
+        "mirId": "MIR:00000106",
+        "name": "GeneDB",
+        "pattern": "^[\\w\\d\\.-]*$",
+         ..."
+        """
         idorg_results = []
         idorg_payload = idorg_data.get('payload', {}).get('namespaces', [])
         for namespace in idorg_payload:
             pattern = namespace.get('pattern', None)
+            prefix = namespace.get('prefix', None)
             if 'resources' in namespace:
                 for resource in namespace['resources']:
                     if 'urlPattern' in resource and 'id' in resource:
                         idorg_results.append({
+                            "prefix": prefix,
                             "urlPattern": resource['urlPattern'],
                             "pattern": pattern,
                             "derived_from": [
@@ -63,6 +75,7 @@ def fetch_and_merge_data(idorg_api_url, togoid_api_url, bioregistry_api_url):
             pattern = value.get('pattern', None)
             if url_pattern and pattern:
                 bioregistry_results.append({
+                    "prefix": prefix,
                     "urlPattern": url_pattern,
                     "pattern": pattern,
                     "derived_from": [
